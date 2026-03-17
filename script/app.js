@@ -280,14 +280,18 @@ const renderForecast = (data) => {
 };
 
 // ===== API CALL =====
+const isLocalhost = !location.hostname.includes(".vercel.app");
+
 const loadWeatherData = async (city) => {
   showLoading();
   $errorMessage.classList.remove("visible");
 
   try {
-    const response = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${CONFIG.API_KEY}&q=${encodeURIComponent(city)}&days=7&aqi=yes&alerts=yes`
-    );
+    const weatherUrl = isLocalhost
+      ? `https://api.weatherapi.com/v1/forecast.json?key=${CONFIG.API_KEY}&q=${encodeURIComponent(city)}&days=7&aqi=no&alerts=no`
+      : `/api/weather?q=${encodeURIComponent(city)}&days=7`;
+
+    const response = await fetch(weatherUrl);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
