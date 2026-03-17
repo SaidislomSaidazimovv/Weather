@@ -3,7 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta name="description" content="atmos. — a beautiful weather app" />
+    <meta name="theme-color" content="#0a0f1e" />
+    <meta name="color-scheme" content="dark light" />
+    <title>atmos. — Weather</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="icon" type="image/png" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
@@ -11,102 +22,153 @@
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <div class="weather-app">
+    <div class="weather-app" theme="dark">
+      <!-- Noise texture overlay -->
+      <div class="noise-overlay"></div>
+
       <div class="container">
+        <!-- NAV -->
         <nav>
-          <h1>Weather App</h1>
-          <form class="search-form" id="searchform">
-            <input type="text" placeholder="Search any city..." id="city" />
-            <button><i class="fas fa-search"></i></button>
-          </form>
-          <div class="light-and-dark-toggle">
-            <input id="theme-toggle" type="checkbox" />
-            <label for="theme-toggle">
-              <i class="bi bi-sun-fill"></i>
-              <i class="bi bi-moon-stars-fill"></i>
-            </label>
+          <div class="nav-brand">atmos.</div>
+          <div class="nav-actions">
+            <button class="nav-btn" id="theme-toggle" title="Toggle theme">
+              <i class="bi bi-sun-fill theme-icon-light"></i>
+              <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+            </button>
+            <button class="nav-btn" id="geo-btn" title="Use my location">
+              <i class="bi bi-crosshair"></i>
+            </button>
           </div>
         </nav>
-        <div class="weather-banner">
-          <div class="main-weather-info-wrapper">
-            <div class="main-weather-info">
-              <img src="" alt="" id="weather-state-icon" />
-              <h2 class="weather-state-celcius">13°</h2>
-              <p class="weather-state-location">California, Cupertino</p>
-            </div>
-            <div class="main-weather-date">
-              <p class="weather-current-time">7:00PM</p>
-              <p class="weather-current-name">Sunset Time, Monday</p>
+
+        <!-- SEARCH -->
+        <div class="search-wrapper">
+          <form class="search-form" id="searchform">
+            <i class="bi bi-search search-icon"></i>
+            <input
+              type="text"
+              placeholder="Search city..."
+              id="city"
+              autocomplete="off"
+            />
+          </form>
+        </div>
+
+        <!-- ERROR -->
+        <div class="error-message" id="error-message"></div>
+
+        <!-- LOADING -->
+        <div class="loading-spinner" id="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+
+        <!-- HERO -->
+        <section class="hero-section">
+          <div class="hero-left">
+            <p class="hero-city weather-state-location">Search a city</p>
+            <p class="hero-date weather-current-name"></p>
+            <h1 class="hero-temp weather-state-celcius">--°</h1>
+            <div class="hero-divider"></div>
+            <p class="hero-condition weather-condition-text">--</p>
+          </div>
+          <div class="hero-right">
+            <img
+              src=""
+              alt="Current weather condition icon"
+              id="weather-state-icon"
+              class="hero-icon"
+            />
+            <div class="hero-pills">
+              <span class="pill weather-feelslike">
+                <i class="bi bi-thermometer-half"></i> --
+              </span>
+              <span class="pill wind-speed">
+                <i class="bi bi-wind"></i> --
+              </span>
+              <span class="pill humidity">
+                <i class="bi bi-droplet-half"></i> --
+              </span>
             </div>
           </div>
-        </div>
-        <div class="map-wrapper">
+        </section>
+
+        <!-- DETAILS GRID -->
+        <section class="details-grid">
+          <div class="detail-card">
+            <div class="detail-header">
+              <i class="bi bi-brightness-high"></i>
+              <span class="detail-label">UV Index</span>
+            </div>
+            <p class="detail-value uv">--</p>
+          </div>
+          <div class="detail-card">
+            <div class="detail-header">
+              <i class="bi bi-speedometer"></i>
+              <span class="detail-label">Pressure</span>
+            </div>
+            <p class="detail-value air-pressure-value">--</p>
+          </div>
+          <div class="detail-card">
+            <div class="detail-header">
+              <i class="bi bi-eye"></i>
+              <span class="detail-label">Visibility</span>
+            </div>
+            <p class="detail-value visibility">--</p>
+          </div>
+          <div class="detail-card detail-card-sunrise-sunset">
+            <div class="detail-sunrise">
+              <div class="detail-header">
+                <i class="bi bi-sunrise"></i>
+                <span class="detail-label">Sunrise</span>
+              </div>
+              <p class="detail-value sunrise">--</p>
+            </div>
+            <div class="detail-sunset">
+              <div class="detail-header">
+                <i class="bi bi-sunset"></i>
+                <span class="detail-label">Sunset</span>
+              </div>
+              <p class="detail-value sunset">--</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHART -->
+        <section class="chart-section">
+          <p class="section-label">24h Temperature</p>
+          <div class="chart-wrapper">
+            <canvas id="myChart"></canvas>
+          </div>
+        </section>
+
+        <!-- FORECAST -->
+        <section class="forecast-strip">
+          <p class="section-label">7-Day Forecast</p>
+          <div class="forecast-cards" id="forecast-cards"></div>
+        </section>
+
+        <!-- MAP -->
+        <section class="map-section">
+          <span class="map-label">Location</span>
           <iframe
             id="map"
-            src="https://maps.google.com/maps?q=Moscow%20Dates%10Products&amp;t=&amp;z=30&amp;output=embed"
+            src=""
             width="100%"
-            height="250"
+            height="280"
             allowfullscreen
             frameborder="0"
           ></iframe>
-        </div>
-        <div class="weather-additional-info">
-          <div class="current-weather-add-info">
-            <div class="add-info">
-              <div class="add-info-item">
-                <i class="bi bi-droplet-half"></i>
-                <div>
-                  <p>Humidity</p>
-                  <p class="humidity">29%</p>
-                </div>
-              </div>
-              <div class="add-info-item">
-                <i class="bi bi-brightness-high"></i>
-                <div>
-                  <p>UV index</p>
-                  <p class="uv">0 out of 10</p>
-                </div>
-              </div>
-            </div>
-            <div class="add-info">
-              <div class="add-info-item">
-                <i class="bi bi-sunset"></i>
-                <div>
-                  <p>Sunset</p>
-                  <p class="sunset">6:58PM</p>
-                </div>
-              </div>
-              <div class="add-info-item">
-                <i class="bi bi-sunrise"></i>
-                <div>
-                  <p>Sunrise</p>
-                  <p class="sunrise">6:35AM</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="current-weather-indicator">
-            <div class="air-pressure">
-              1065Pa
-              <p class="air-pressure">Air Pressure</p>
-            </div>
-            <div class="wind-direction">
-              <div class="wind-arrow">
-                <i class="bi bi-triangle-fill"></i>
-              </div>
-            </div>
-          </div>
-          <div class="current-weather-hourly">
-            <div class="chart-wrapper">
-              <canvas id="myChart"></canvas>
-            </div>
-            <div class="day-info"></div>
-          </div>
+        </section>
+
+        <!-- Wind direction indicator (hidden visually, keeps JS working) -->
+        <div class="wind-arrow" style="display:none;">
+          <i class="bi bi-triangle-fill"></i>
         </div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./config.js"></script>
     <script src="./script/app.js"></script>
   </body>
 </html>
